@@ -11,6 +11,9 @@ import {
 import { dataFormatter } from "models/formatter";
 import { Price } from "models/prices";
 
+/** ETFの価格推移グラフ
+ * @param data グラフ用価格データ配列
+ */
 export const PriceHistoryGraph = (data: Price[]) => {
   return (
     <ResponsiveContainer width="100%" height={400}>
