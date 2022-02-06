@@ -97,13 +97,8 @@ const Home = () => {
 };
 
 /** 元データのJSONを取得 */
-const jsonToPriceHistory = () => {
-  let list: Price[] = priceJson.map((x) => {
-    return { Date: x.Date, Value: x["Adj Close"] };
-  });
-
-  return list;
-};
+const jsonToPriceHistory = (): Price[] =>
+  priceJson.map((x) => ({ Date: x.Date, Value: x["Adj Close"] }));
 
 /** 移動平均を追記 */
 const calculateMovingAverage = (
