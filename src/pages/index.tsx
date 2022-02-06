@@ -1,11 +1,11 @@
-import styles from "styles/Home.module.css";
 import { useState, useRef } from "react";
-import priceJson from "data/price.json";
-import { Price } from "models/prices";
 import { ma, ema, wma } from "moving-averages";
+import { Price } from "models/prices";
 import { MaTypes, MaType, AllMaType } from "models/maTypes";
 import { MaWindowTypes, MaRangeType, AllMaWindowType } from "models/maWindow";
 import { PriceHistoryGraph } from "components/organisms/graph/priceHistory";
+import styles from "styles/Home.module.scss";
+import priceJson from "data/price.json";
 
 const Home = () => {
   const windowInputElm = useRef<HTMLInputElement | null>(null);
