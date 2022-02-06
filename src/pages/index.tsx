@@ -12,40 +12,16 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { ma, dma, ema, sma, wma } from "moving-averages";
-
-/** 移動平均線の種類 */
-const MaTypes = {
-  Simple: "(SMA) 単純移動平均線",
-  Weighted: "(WMA) 加重移動平均線",
-  Exponential: "(EMA) 指数平滑移動平均線",
-} as const;
-type MaType = typeof MaTypes[keyof typeof MaTypes];
-const AllMaType = Object.values(MaTypes);
-
-const MaWindowTypes = {
-  Date: "日",
-  Week: "週",
-  Month: "月",
-} as const;
-type MaRangeType = typeof MaWindowTypes[keyof typeof MaWindowTypes];
-const AllMaWindowType = Object.values(MaWindowTypes);
-
-/** 数値単位のフォーマット */
-const dataFormatter = (number: number) => {
-  const abs = number < 0 ? -number : number;
-  const num = Math.floor(number * Math.pow(10, 2)) / Math.pow(10, 2);
-
-  if (abs > 1000000000) {
-    return (num / 1000000000).toString() + "Bil";
-  } else if (abs > 1000000) {
-    return (num / 1000000).toString() + "Mil";
-  } else if (abs > 1000) {
-    return (num / 1000).toString() + "K";
-  } else {
-    return num.toString();
-  }
-};
+import { ma, ema, wma } from "moving-averages";
+import {
+  MaTypes,
+  MaType,
+  AllMaType,
+  MaWindowTypes,
+  MaRangeType,
+  AllMaWindowType,
+} from "../models/moving-average";
+import { dataFormatter } from "../models/formatter";
 
 const Home = () => {
   const windowInputElm = useRef<HTMLInputElement | null>(null);
