@@ -16,10 +16,7 @@ const Home = () => {
 
   const handleClick = () => {
     // 移動平均線種類
-    if (
-      maTypeSelectElm.current &&
-      typeof (maTypeSelectElm.current.value as MaType)
-    ) {
+    if (maTypeSelectElm.current) {
       changeMaType(maTypeSelectElm.current.value);
     }
 
