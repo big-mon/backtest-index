@@ -8,22 +8,18 @@ import styles from "styles/Home.module.scss";
 import priceJson from "data/price.json";
 
 const Home = () => {
-  const windowInputElm = useRef<HTMLInputElement | null>(null);
+  const windowElm = useRef<HTMLInputElement | null>(null);
   const [maWindow, changeWindow] = useState<number>(200);
 
-  const maTypeSelectElm = useRef<HTMLSelectElement | null>(null);
+  const maTypeElm = useRef<HTMLSelectElement | null>(null);
   const [maType, changeMaType] = useState<string>(MaTypes.Simple);
 
   const handleClick = () => {
     // 移動平均線種類
-    if (maTypeSelectElm.current) {
-      changeMaType(maTypeSelectElm.current.value);
-    }
+    if (maTypeElm.current) changeMaType(maTypeElm.current.value);
 
     // 期間設定
-    if (windowInputElm.current) {
-      changeWindow(windowInputElm.current.valueAsNumber);
-    }
+    if (windowElm.current) changeWindow(windowElm.current.valueAsNumber);
   };
 
   const data = calculateMovingAverage(
@@ -42,7 +38,7 @@ const Home = () => {
           <p>
             <label>
               <span>移動平均線種類</span>
-              <select ref={maTypeSelectElm} defaultValue={AllMaType[0]}>
+              <select ref={maTypeElm} defaultValue={AllMaType[0]}>
                 {AllMaType.map((type) => (
                   <option key={type} value={type}>
                     {type}
@@ -58,7 +54,7 @@ const Home = () => {
               <input
                 type="number"
                 defaultValue={maWindow}
-                ref={windowInputElm}
+                ref={windowElm}
                 min={1}
                 max={999}
               />
