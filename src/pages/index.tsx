@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { ma, ema, wma } from "moving-averages";
 import { Price } from "models/prices";
-import { MaTypes, MaType, AllMaType } from "models/maTypes";
+import { MaTypes, AllMaType } from "models/maTypes";
 import { MaWindowTypes, MaRangeType, AllMaWindowType } from "models/maWindow";
 import { PriceHistoryGraph } from "components/organisms/graph/priceHistory";
 import styles from "styles/Home.module.scss";
