@@ -1,7 +1,7 @@
-import styles from "../styles/Home.module.css";
+import styles from "styles/Home.module.css";
 import { useState, useRef } from "react";
-import priceJson from "../data/price.json";
-import { Price } from "../models/prices";
+import priceJson from "data/price.json";
+import { Price } from "models/prices";
 import {
   LineChart,
   Line,
@@ -21,7 +21,7 @@ import {
   MaRangeType,
   AllMaWindowType,
 } from "../models/moving-average";
-import { dataFormatter } from "../models/formatter";
+import { dataFormatter } from "models/formatter";
 
 const Home = () => {
   const windowInputElm = useRef<HTMLInputElement | null>(null);
