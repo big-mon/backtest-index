@@ -13,14 +13,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ma, ema, wma } from "moving-averages";
-import {
-  MaTypes,
-  MaType,
-  AllMaType,
-  MaWindowTypes,
-  MaRangeType,
-  AllMaWindowType,
-} from "../models/moving-average";
+import { MaTypes, MaType, AllMaType } from "models/maTypes";
+import { MaWindowTypes, MaRangeType, AllMaWindowType } from "models/maWindow";
 import { dataFormatter } from "models/formatter";
 
 const Home = () => {
