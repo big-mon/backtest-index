@@ -38,13 +38,13 @@ const Home = () => {
 
   return (
     <main>
-      <fieldset>
+      <fieldset className={styles.fieldset}>
         <legend>テスト条件</legend>
 
         <div>
           <p>
             <label>
-              <span className={styles.settingTitle}>移動平均線種類</span>
+              <span>移動平均線種類</span>
               <select ref={maTypeSelectElm} defaultValue={AllMaType[0]}>
                 {AllMaType.map((type) => (
                   <option key={type} value={type}>
@@ -57,11 +57,13 @@ const Home = () => {
 
           <p>
             <label>
-              <span className={styles.settingTitle}>期間設定</span>
+              <span>期間設定</span>
               <input
                 type="number"
                 defaultValue={maWindow}
                 ref={windowInputElm}
+                min={1}
+                max={999}
               />
               <select defaultValue={AllMaWindowType[0]}>
                 {AllMaWindowType.map((type) => {
@@ -77,7 +79,7 @@ const Home = () => {
 
           <p>
             <label>
-              <span className={styles.settingTitle}>売買判断</span>
+              <span>売買判断</span>
               <select defaultValue={"月末"}>
                 <option disabled>月初</option>
                 <option value="月末">月末</option>

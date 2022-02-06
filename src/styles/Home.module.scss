@@ -1,5 +1,17 @@
-.settingTitle {
-  display: inline-block;
-  width: 8rem;
-  font-weight: 600;
+.fieldset {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+  margin: 0 auto 2rem;
+  padding: 1rem 1.6rem;
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  span {
+    display: inline-block;
+    width: 8rem;
+    font-weight: 600;
+  }
 }
