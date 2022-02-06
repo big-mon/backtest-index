@@ -84,7 +84,7 @@ const Home = () => {
         <button onClick={handleClick}>Run</button>
       </fieldset>
 
-      {PriceHistoryGraph(data)}
+      <div className={styles.bigGraph}>{PriceHistoryGraph(data)}</div>
     </main>
   );
 };

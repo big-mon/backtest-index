@@ -16,18 +16,8 @@ import { Price } from "models/prices";
  */
 export const PriceHistoryGraph = (data: Price[]) => {
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <LineChart
-        width={500}
-        height={200}
-        data={data}
-        margin={{
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 0,
-        }}
-      >
+    <ResponsiveContainer>
+      <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="Date" />
         <YAxis />
@@ -37,14 +27,14 @@ export const PriceHistoryGraph = (data: Price[]) => {
           dataKey="Value"
           name="ETF Value"
           type="linear"
-          stroke="#8884d8"
+          stroke="#003f5c"
           dot={false}
         />
         <Line
           dataKey="MA"
           name="MA"
           type="linear"
-          stroke="#82ca9d"
+          stroke="#58508d"
           dot={false}
         />
       </LineChart>
