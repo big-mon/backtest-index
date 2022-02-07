@@ -60,4 +60,8 @@ const numFormatter = (number: number): string => {
  * @returns フォーマット後文字列
  */
 const dateFormatter = (date: Date): string =>
-  date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
+  date.getUTCFullYear() +
+  "-" +
+  (date.getUTCMonth() + 1) +
+  "-" +
+  date.getUTCDate();
