@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { ma, ema, wma } from "moving-averages";
 import { Price } from "models/prices";
+import { Asset } from "models/assets";
 import { MaTypes, AllMaType } from "models/maTypes";
 import { MaWindowTypes, MaRangeType, AllMaWindowType } from "models/maWindow";
 import { TradeTimings, TradeTiming, AllTradeTiming } from "models/tradeTiming";
 import { PriceHistoryGraph } from "components/organisms/graph/priceHistory";
+import { AssetGraph } from "components/organisms/graph/asset";
 import styles from "styles/Home.module.scss";
 import dailyJson from "data/daily.json";
 
@@ -18,6 +20,17 @@ const Home = () => {
   const tradeTimingElm = useRef<HTMLSelectElement | null>(null);
   const [tradeTiming, setTrade] = useState<string>(TradeTimings.MonthEnd);
 
+  const priceHistory = calculateMovingAverage(
+    maType,
+    MaWindowTypes.Date,
+    maWindow,
+    jsonToPriceHistory()
+  );
+
+  const [tradeOptions, setTradeOptions] = useState<Date[]>(
+    retrieveTradeTimingOption(priceHistory, tradeTiming)
+  );
+
   const handleClick = () => {
     // 移動平均線種類
     if (maTypeElm.current) setMaType(maTypeElm.current.value);
@@ -27,18 +40,9 @@ const Home = () => {
 
     // 売買判断
     if (tradeTimingElm.current) setTrade(tradeTimingElm.current.value);
+
+    setTradeOptions(retrieveTradeTimingOption(priceHistory, tradeTiming));
   };
-
-  useEffect(() => {
-    const tradeOptions = retrieveTradeTimingOption(priceHistory, tradeTiming);
-  });
-
-  const priceHistory = calculateMovingAverage(
-    maType,
-    MaWindowTypes.Date,
-    maWindow,
-    jsonToPriceHistory()
-  );
 
   return (
     <main>
@@ -101,6 +105,17 @@ const Home = () => {
       </fieldset>
 
       <div className={styles.bigGraph}>{PriceHistoryGraph(priceHistory)}</div>
+
+      <div className={styles.bigGraph}>
+        {AssetGraph(
+          calcAsset(
+            priceHistory,
+            tradeOptions,
+            priceHistory[0].Date,
+            priceHistory[priceHistory.length - 1].Date
+          )
+        )}
+      </div>
     </main>
   );
 };
@@ -186,6 +201,89 @@ const retrieveTradeTimingOption = (data: Price[], timing: string) => {
   });
 
   return optionList;
+};
+
+/** 資産の推移を計算
+ * @param history 対象商品の価格推移
+ * @param trade 売買判断日
+ * @param start 計算開始日
+ * @param end 計算終了日
+ * @param initialCash 初期資金
+ * @returns 資産の推移
+ */
+const calcAsset = (
+  history: Price[],
+  trade: Date[],
+  start: Date,
+  end: Date,
+  initialCash: number = 100000
+): Asset[] => {
+  let result: Asset[] = [];
+  let nowCash: number = initialCash;
+  let nowEquityQuantity: number = 0;
+  let averageCost: number = 0;
+  const compareQuantity = Math.floor(nowCash / history[0].Value);
+
+  // 売買判断
+  const isBuy = (price: Price): boolean =>
+    price.MA ? price.Value > price.MA : false;
+  const isSell = (price: Price): boolean =>
+    price.MA ? price.Value < price.MA : false;
+
+  history.forEach((his) => {
+    let todayAsset: Asset = {
+      Date: his.Date,
+      Total: nowCash + nowEquityQuantity * his.Value,
+      Cash: nowCash,
+      Equity: nowEquityQuantity * his.Value,
+      BuyAndHold: compareQuantity * his.Value,
+    };
+
+    if (
+      !his.MA ||
+      !trade.some((d) => d.getTime() === his.Date.getTime()) ||
+      (!isBuy(his) && !isSell(his))
+    ) {
+      // 売買を行わない日の場合
+      result.push(todayAsset);
+      return;
+    }
+
+    if (isBuy(his)) {
+      // 購入及びホールド時
+      const buyQuantity = Math.floor(nowCash / his.Value);
+      const buyCost = his.Value * buyQuantity;
+      const beforeAvgCost = Number(averageCost.toString());
+      const beforeQuantity = nowEquityQuantity;
+      const afterAvgCost =
+        (beforeAvgCost * nowEquityQuantity + buyCost) /
+        (beforeQuantity + buyQuantity);
+
+      nowCash -= buyCost;
+      nowEquityQuantity += buyQuantity;
+      averageCost = afterAvgCost;
+
+      todayAsset.Cash = nowCash;
+      todayAsset.Equity = nowEquityQuantity * his.Value;
+      todayAsset.Total = todayAsset.Cash + todayAsset.Equity;
+    } else if (isSell(his)) {
+      // 売却及びホールド時
+      const sellTotal = his.Value * nowEquityQuantity;
+      nowCash += sellTotal;
+      nowEquityQuantity = 0;
+      averageCost = 0;
+
+      todayAsset.Equity = 0;
+      todayAsset.Cash = nowCash;
+      todayAsset.Total = todayAsset.Cash + todayAsset.Equity;
+    } else {
+      // 移動平均と同値時
+    }
+
+    result.push(todayAsset);
+  });
+
+  return result;
 };
 
 export default Home;

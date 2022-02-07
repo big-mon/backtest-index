@@ -1,5 +1,6 @@
 import {
-  LineChart,
+  ComposedChart,
+  Area,
   Line,
   XAxis,
   YAxis,
@@ -8,29 +9,24 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { Price } from "models/prices";
+import { Asset } from "models/assets";
 
-/** ETFの価格推移グラフ
+/** 資産推移グラフ
  * @param data グラフ用価格データ配列
  */
-export const PriceHistoryGraph = (data: Price[]) => {
+export const AssetGraph = (data: Asset[]) => {
   return (
     <ResponsiveContainer>
-      <LineChart data={data} syncId="history">
+      <ComposedChart data={data} syncId="history">
         <CartesianGrid strokeDasharray="3" />
         <XAxis dataKey="Date" minTickGap={30} tickFormatter={dateFormatter} />
         <YAxis />
         <Tooltip formatter={numFormatter} labelFormatter={dateFormatter} />
         <Legend />
-        <Line dataKey="Value" name="ETF Value" stroke="#003f5c" dot={false} />
-        <Line
-          dataKey="MA"
-          name="MA"
-          stroke="#58508d"
-          dot={false}
-          strokeWidth={2}
-        />
-      </LineChart>
+        <Area dataKey="Equity" stackId="1" fill="#003f5c" stroke="#003249" />
+        <Area dataKey="Cash" stackId="1" fill="#bc5090" stroke="#964073" />
+        <Line dataKey="BuyAndHold" stroke="#bc5090" dot={false} />
+      </ComposedChart>
     </ResponsiveContainer>
   );
 };
