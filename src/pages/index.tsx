@@ -103,7 +103,7 @@ const Home = () => {
 
 /** 元データのJSONを取得 */
 const jsonToPriceHistory = (): Price[] =>
-  dailyJson.map((x) => ({ Date: x.Date, Value: x["Adj Close"] }));
+  dailyJson.map((x) => ({ Date: new Date(x.Date), Value: x["Adj Close"] }));
 
 /** 移動平均を追記 */
 const calculateMovingAverage = (
