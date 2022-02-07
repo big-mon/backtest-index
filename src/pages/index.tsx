@@ -3,6 +3,7 @@ import { ma, ema, wma } from "moving-averages";
 import { Price } from "models/prices";
 import { MaTypes, AllMaType } from "models/maTypes";
 import { MaWindowTypes, MaRangeType, AllMaWindowType } from "models/maWindow";
+import { TradeTimings, TradeTiming, AllTradeTiming } from "models/tradeTiming";
 import { PriceHistoryGraph } from "components/organisms/graph/priceHistory";
 import styles from "styles/Home.module.scss";
 import priceJson from "data/price.json";
@@ -73,9 +74,14 @@ const Home = () => {
           <p>
             <label>
               <span>売買判断</span>
-              <select defaultValue={"月末"}>
-                <option disabled>月初</option>
-                <option value="月末">月末</option>
+              <select defaultValue={AllTradeTiming[1]}>
+                {AllTradeTiming.map((type) => {
+                  return (
+                    <option key={type} value={type} disabled>
+                      {type}
+                    </option>
+                  );
+                })}
               </select>
             </label>
           </p>
