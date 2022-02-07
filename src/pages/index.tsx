@@ -30,10 +30,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    retrieveTradeTimingOption(data, tradeTiming);
+    const tradeOptions = retrieveTradeTimingOption(priceHistory, tradeTiming);
   });
 
-  const data = calculateMovingAverage(
+  const priceHistory = calculateMovingAverage(
     maType,
     MaWindowTypes.Date,
     maWindow,
@@ -100,7 +100,7 @@ const Home = () => {
         <button onClick={handleClick}>Run</button>
       </fieldset>
 
-      <div className={styles.bigGraph}>{PriceHistoryGraph(data)}</div>
+      <div className={styles.bigGraph}>{PriceHistoryGraph(priceHistory)}</div>
     </main>
   );
 };
@@ -123,7 +123,7 @@ const calculateMovingAverage = (
   rangeType: MaRangeType,
   window: number,
   baseData: Price[]
-) => {
+): Price[] => {
   // 各日の価格配列から移動平均を算出
   const valuesList = baseData.map((data) => data.Value);
   let maList: number[];
