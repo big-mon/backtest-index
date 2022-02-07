@@ -20,6 +20,12 @@ const Home = () => {
   const tradeTimingElm = useRef<HTMLSelectElement | null>(null);
   const [tradeTiming, setTrade] = useState<string>(TradeTimings.MonthEnd);
 
+  const startDateElm = useRef<HTMLInputElement | null>(null);
+  const [startDate, setStartDate] = useState<Date>(new Date("2000-01-01"));
+
+  const endDateElm = useRef<HTMLInputElement | null>(null);
+  const [endDate, setEndDate] = useState<Date>(new Date());
+
   const priceHistory = calculateMovingAverage(
     maType,
     MaWindowTypes.Date,
@@ -41,8 +47,23 @@ const Home = () => {
     // 売買判断
     if (tradeTimingElm.current) setTrade(tradeTimingElm.current.value);
 
+    // 開始日
+    if (startDateElm.current && startDateElm.current.valueAsDate)
+      setStartDate(startDateElm.current.valueAsDate);
+
+    // 終了日
+    if (endDateElm.current && endDateElm.current.valueAsDate)
+      setEndDate(endDateElm.current.valueAsDate);
+
     setTradeOptions(retrieveTradeTimingOption(priceHistory, tradeTiming));
   };
+
+  const convertDateValue = (date: Date) =>
+    date.getUTCFullYear() +
+    "-" +
+    ("0" + (date.getUTCMonth() + 1)).slice(-2) +
+    "-" +
+    ("0" + date.getUTCDate()).slice(-2);
 
   return (
     <main>
@@ -101,20 +122,45 @@ const Home = () => {
           </p>
         </div>
 
+        <div>
+          <p>
+            <label>
+              <span>開始日</span>
+              <input
+                type="date"
+                ref={startDateElm}
+                defaultValue={convertDateValue(startDate)}
+              />
+            </label>
+          </p>
+
+          <p>
+            <label>
+              <span>終了日</span>
+              <input
+                type="date"
+                ref={endDateElm}
+                defaultValue={convertDateValue(endDate)}
+              />
+            </label>
+          </p>
+        </div>
+
         <button onClick={handleClick}>Run</button>
       </fieldset>
 
-      <div className={styles.bigGraph}>{PriceHistoryGraph(priceHistory)}</div>
-
       <div className={styles.bigGraph}>
-        {AssetGraph(
-          calcAsset(
-            priceHistory,
-            tradeOptions,
-            priceHistory[0].Date,
-            priceHistory[priceHistory.length - 1].Date
+        {PriceHistoryGraph(
+          priceHistory.filter(
+            (his) =>
+              startDate.getTime() <= his.Date.getTime() &&
+              his.Date.getTime() <= endDate.getTime()
           )
         )}
+      </div>
+
+      <div className={styles.bigGraph}>
+        {AssetGraph(calcAsset(priceHistory, tradeOptions, startDate, endDate))}
       </div>
     </main>
   );
@@ -222,7 +268,10 @@ const calcAsset = (
   let nowCash: number = initialCash;
   let nowEquityQuantity: number = 0;
   let averageCost: number = 0;
-  const compareQuantity = Math.floor(nowCash / history[0].Value);
+  const compareQuantity = Math.floor(
+    nowCash /
+      history.filter((his) => start.getTime() <= his.Date.getTime())[0].Value
+  );
 
   // 売買判断
   const isBuy = (price: Price): boolean =>
@@ -241,7 +290,12 @@ const calcAsset = (
 
     if (
       !his.MA ||
-      !trade.some((d) => d.getTime() === his.Date.getTime()) ||
+      !trade
+        .filter(
+          (date) =>
+            start.getTime() <= date.getTime() && date.getTime() <= end.getTime()
+        )
+        .some((d) => d.getTime() === his.Date.getTime()) ||
       (!isBuy(his) && !isSell(his))
     ) {
       // 売買を行わない日の場合
@@ -276,14 +330,16 @@ const calcAsset = (
       todayAsset.Equity = 0;
       todayAsset.Cash = nowCash;
       todayAsset.Total = todayAsset.Cash + todayAsset.Equity;
-    } else {
-      // 移動平均と同値時
     }
 
     result.push(todayAsset);
   });
 
-  return result;
+  return result.filter(
+    (his) =>
+      start.getTime() <= his.Date.getTime() &&
+      his.Date.getTime() <= end.getTime()
+  );
 };
 
 export default Home;
