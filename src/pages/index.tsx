@@ -15,12 +15,18 @@ const Home = () => {
   const maTypeElm = useRef<HTMLSelectElement | null>(null);
   const [maType, changeMaType] = useState<string>(MaTypes.Simple);
 
+  const tradeTimingElm = useRef<HTMLSelectElement | null>(null);
+  const [tradeTiming, changeTrade] = useState<string>(TradeTimings.MonthEnd);
+
   const handleClick = () => {
     // 移動平均線種類
     if (maTypeElm.current) changeMaType(maTypeElm.current.value);
 
     // 期間設定
     if (windowElm.current) changeWindow(windowElm.current.valueAsNumber);
+
+    // 売買判断
+    if (tradeTimingElm.current) changeTrade(tradeTimingElm.current.value);
   };
 
   const data = calculateMovingAverage(
@@ -74,10 +80,10 @@ const Home = () => {
           <p>
             <label>
               <span>売買判断</span>
-              <select defaultValue={AllTradeTiming[1]}>
+              <select ref={tradeTimingElm} defaultValue={AllTradeTiming[1]}>
                 {AllTradeTiming.map((type) => {
                   return (
-                    <option key={type} value={type} disabled>
+                    <option key={type} value={type}>
                       {type}
                     </option>
                   );
