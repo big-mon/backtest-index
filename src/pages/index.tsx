@@ -105,11 +105,19 @@ const Home = () => {
   );
 };
 
-/** 元データのJSONを取得 */
+/** 元データのJSONを取得
+ * @returns JSONから整形したデータ
+ */
 const jsonToPriceHistory = (): Price[] =>
   dailyJson.map((x) => ({ Date: new Date(x.Date), Value: x["Adj Close"] }));
 
-/** 移動平均を追記 */
+/** 移動平均を追記
+ * @param type 移動平均線の種類
+ * @param rangeType 日足、週足、月足
+ * @param window 期間設定
+ * @param baseData 元データ
+ * @returns baseDataに対して移動平均を追記したデータ
+ */
 const calculateMovingAverage = (
   type: string,
   rangeType: MaRangeType,
