@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ma, ema, wma } from "moving-averages";
 import { Price } from "models/prices";
 import { MaTypes, AllMaType } from "models/maTypes";
@@ -28,6 +28,10 @@ const Home = () => {
     // 売買判断
     if (tradeTimingElm.current) changeTrade(tradeTimingElm.current.value);
   };
+
+  useEffect(() => {
+    retrieveTradeTimingOption(data, tradeTiming);
+  });
 
   const data = calculateMovingAverage(
     maType,
@@ -136,6 +140,44 @@ const calculateMovingAverage = (
     MA: maList[i],
   }));
   return result;
+};
+
+/** 売買判断を行う日付を取得
+ * @param data 算出対象期間内データ
+ * @param timing 売買判断のタイミング
+ * @returns 日付リスト
+ */
+const retrieveTradeTimingOption = (data: Price[], timing: string) => {
+  let optionList: Price["Date"][] = [];
+
+  // yyyy-mm文字列の取得関数
+  const calcDateString = (date: Date) =>
+    date.getFullYear() + "-" + (date.getMonth() + 1);
+
+  // 月リストを取得
+  const monthList = new Set(data.map((d) => calcDateString(d.Date)));
+
+  // 月をループ
+  monthList.forEach((month) => {
+    // 対象月のデータに絞り込み
+    const targetMonthDates = data.filter(
+      (d) => calcDateString(d.Date) === month
+    );
+
+    // 売買判断タイミングに合わせて日付を抽出
+    switch (timing) {
+      case TradeTimings.MonthStart:
+        // 月初
+        optionList.push(targetMonthDates[0].Date);
+        break;
+      default:
+        // 月末
+        optionList.push(targetMonthDates[targetMonthDates.length - 1].Date);
+        break;
+    }
+  });
+
+  return optionList;
 };
 
 export default Home;
