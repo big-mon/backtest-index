@@ -10,23 +10,23 @@ import dailyJson from "data/daily.json";
 
 const Home = () => {
   const windowElm = useRef<HTMLInputElement | null>(null);
-  const [maWindow, changeWindow] = useState<number>(200);
+  const [maWindow, setWindow] = useState<number>(200);
 
   const maTypeElm = useRef<HTMLSelectElement | null>(null);
-  const [maType, changeMaType] = useState<string>(MaTypes.Simple);
+  const [maType, setMaType] = useState<string>(MaTypes.Simple);
 
   const tradeTimingElm = useRef<HTMLSelectElement | null>(null);
-  const [tradeTiming, changeTrade] = useState<string>(TradeTimings.MonthEnd);
+  const [tradeTiming, setTrade] = useState<string>(TradeTimings.MonthEnd);
 
   const handleClick = () => {
     // 移動平均線種類
-    if (maTypeElm.current) changeMaType(maTypeElm.current.value);
+    if (maTypeElm.current) setMaType(maTypeElm.current.value);
 
     // 期間設定
-    if (windowElm.current) changeWindow(windowElm.current.valueAsNumber);
+    if (windowElm.current) setWindow(windowElm.current.valueAsNumber);
 
     // 売買判断
-    if (tradeTimingElm.current) changeTrade(tradeTimingElm.current.value);
+    if (tradeTimingElm.current) setTrade(tradeTimingElm.current.value);
   };
 
   useEffect(() => {
