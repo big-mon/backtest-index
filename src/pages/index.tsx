@@ -6,7 +6,7 @@ import { MaWindowTypes, MaRangeType, AllMaWindowType } from "models/maWindow";
 import { TradeTimings, TradeTiming, AllTradeTiming } from "models/tradeTiming";
 import { PriceHistoryGraph } from "components/organisms/graph/priceHistory";
 import styles from "styles/Home.module.scss";
-import priceJson from "data/price.json";
+import dailyJson from "data/daily.json";
 
 const Home = () => {
   const windowElm = useRef<HTMLInputElement | null>(null);
@@ -97,7 +97,7 @@ const Home = () => {
 
 /** 元データのJSONを取得 */
 const jsonToPriceHistory = (): Price[] =>
-  priceJson.map((x) => ({ Date: x.Date, Value: x["Adj Close"] }));
+  dailyJson.map((x) => ({ Date: x.Date, Value: x["Adj Close"] }));
 
 /** 移動平均を追記 */
 const calculateMovingAverage = (
