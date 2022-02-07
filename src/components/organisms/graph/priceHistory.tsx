@@ -41,16 +41,17 @@ export const PriceHistoryGraph = (data: Price[]) => {
  */
 const numFormatter = (number: number): string => {
   const abs = number < 0 ? -number : number;
-  const num = Math.floor(number * Math.pow(10, 2)) / Math.pow(10, 2);
+  const fixNum = (num: number) =>
+    Math.floor(num * Math.pow(10, 2)) / Math.pow(10, 2);
 
   if (abs > 1000000000) {
-    return (num / 1000000000).toString() + "Bil";
+    return fixNum(number / 1000000000).toString() + "Bil";
   } else if (abs > 1000000) {
-    return (num / 1000000).toString() + "Mil";
+    return fixNum(number / 1000000).toString() + "Mil";
   } else if (abs > 1000) {
-    return (num / 1000).toString() + "K";
+    return fixNum(number / 1000).toString() + "K";
   } else {
-    return num.toString();
+    return fixNum(number).toString();
   }
 };
 
