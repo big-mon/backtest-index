@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import Head from "next/head";
 import { ma, ema, wma } from "moving-averages";
 import { Price } from "models/prices";
 import { Asset } from "models/assets";
 import { MaTypes, AllMaType } from "models/maTypes";
 import { MaWindowTypes, MaRangeType, AllMaWindowType } from "models/maWindow";
-import { TradeTimings, TradeTiming, AllTradeTiming } from "models/tradeTiming";
+import { TradeTimings, AllTradeTiming } from "models/tradeTiming";
 import { PriceHistoryGraph } from "components/organisms/graph/priceHistory";
 import { AssetGraph } from "components/organisms/graph/asset";
 import styles from "styles/Home.module.scss";
@@ -66,103 +67,111 @@ const Home = () => {
     ("0" + date.getUTCDate()).slice(-2);
 
   return (
-    <main>
-      <fieldset className={styles.fieldset}>
-        <legend>SPYに対するバックテスト条件</legend>
+    <>
+      <Head>
+        <title>SPYと移動平均線のバックテスト</title>
+      </Head>
 
-        <div>
-          <p>
-            <label>
-              <span>移動平均線種類</span>
-              <select ref={maTypeElm} defaultValue={AllMaType[0]}>
-                {AllMaType.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </p>
+      <main>
+        <fieldset className={styles.fieldset}>
+          <legend>SPYに対するバックテスト条件</legend>
 
-          <p>
-            <label>
-              <span>期間設定</span>
-              <input
-                type="number"
-                defaultValue={maWindow}
-                ref={windowElm}
-                min={1}
-                max={999}
-              />
-              <select defaultValue={AllMaWindowType[0]}>
-                {AllMaWindowType.map((type) => {
-                  return (
-                    <option key={type} value={type} disabled>
-                      {type}
-                    </option>
-                  );
-                })}
-              </select>
-            </label>
-          </p>
-
-          <p>
-            <label>
-              <span>売買判断</span>
-              <select ref={tradeTimingElm} defaultValue={AllTradeTiming[1]}>
-                {AllTradeTiming.map((type) => {
-                  return (
+          <div>
+            <p>
+              <label>
+                <span>移動平均線種類</span>
+                <select ref={maTypeElm} defaultValue={AllMaType[0]}>
+                  {AllMaType.map((type) => (
                     <option key={type} value={type}>
                       {type}
                     </option>
-                  );
-                })}
-              </select>
-            </label>
-          </p>
+                  ))}
+                </select>
+              </label>
+            </p>
+
+            <p>
+              <label>
+                <span>期間設定</span>
+                <input
+                  type="number"
+                  defaultValue={maWindow}
+                  ref={windowElm}
+                  min={1}
+                  max={999}
+                />
+                <select defaultValue={AllMaWindowType[0]}>
+                  {AllMaWindowType.map((type) => {
+                    return (
+                      <option key={type} value={type} disabled>
+                        {type}
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+            </p>
+
+            <p>
+              <label>
+                <span>売買判断</span>
+                <select ref={tradeTimingElm} defaultValue={AllTradeTiming[1]}>
+                  {AllTradeTiming.map((type) => {
+                    return (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+            </p>
+          </div>
+
+          <div>
+            <p>
+              <label>
+                <span>開始日</span>
+                <input
+                  type="date"
+                  ref={startDateElm}
+                  defaultValue={convertDateValue(startDate)}
+                />
+              </label>
+            </p>
+
+            <p>
+              <label>
+                <span>終了日</span>
+                <input
+                  type="date"
+                  ref={endDateElm}
+                  defaultValue={convertDateValue(endDate)}
+                />
+              </label>
+            </p>
+          </div>
+
+          <button onClick={handleClick}>Run</button>
+        </fieldset>
+
+        <div className={styles.bigGraph}>
+          {PriceHistoryGraph(
+            priceHistory.filter(
+              (his) =>
+                startDate.getTime() <= his.Date.getTime() &&
+                his.Date.getTime() <= endDate.getTime()
+            )
+          )}
         </div>
 
-        <div>
-          <p>
-            <label>
-              <span>開始日</span>
-              <input
-                type="date"
-                ref={startDateElm}
-                defaultValue={convertDateValue(startDate)}
-              />
-            </label>
-          </p>
-
-          <p>
-            <label>
-              <span>終了日</span>
-              <input
-                type="date"
-                ref={endDateElm}
-                defaultValue={convertDateValue(endDate)}
-              />
-            </label>
-          </p>
+        <div className={styles.bigGraph}>
+          {AssetGraph(
+            calcAsset(priceHistory, tradeOptions, startDate, endDate)
+          )}
         </div>
-
-        <button onClick={handleClick}>Run</button>
-      </fieldset>
-
-      <div className={styles.bigGraph}>
-        {PriceHistoryGraph(
-          priceHistory.filter(
-            (his) =>
-              startDate.getTime() <= his.Date.getTime() &&
-              his.Date.getTime() <= endDate.getTime()
-          )
-        )}
-      </div>
-
-      <div className={styles.bigGraph}>
-        {AssetGraph(calcAsset(priceHistory, tradeOptions, startDate, endDate))}
-      </div>
-    </main>
+      </main>
+    </>
   );
 };
 
