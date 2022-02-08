@@ -223,6 +223,12 @@ const retrieveTradeTimingOption = (data: Price[], timing: string) => {
   const calcDateString = (date: Date) =>
     date.getFullYear() + "-" + (date.getMonth() + 1);
 
+  if (timing === TradeTimings.Daily) {
+    // 毎日の場合
+    optionList = data.map((d) => d.Date);
+    return optionList;
+  }
+
   // 月リストを取得
   const monthList = new Set(data.map((d) => calcDateString(d.Date)));
 

@@ -1,5 +1,6 @@
 /** 売買判断の種類 */
 export const TradeTimings = {
+  Daily: "毎日",
   MonthStart: "月初",
   MonthEnd: "月末",
 } as const;
