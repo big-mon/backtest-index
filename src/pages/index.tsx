@@ -68,7 +68,7 @@ const Home = () => {
   return (
     <main>
       <fieldset className={styles.fieldset}>
-        <legend>テスト条件</legend>
+        <legend>SPYに対するバックテスト条件</legend>
 
         <div>
           <p>
