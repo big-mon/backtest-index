@@ -24,7 +24,7 @@ const Home = () => {
   const [startDate, setStartDate] = useState<Date>(new Date("2000-01-01"));
 
   const endDateElm = useRef<HTMLInputElement | null>(null);
-  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date("2022-02-04"));
 
   const priceHistory = calculateMovingAverage(
     maType,
